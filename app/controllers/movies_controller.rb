@@ -9,10 +9,7 @@ class MoviesController < ApplicationController
     flash[:notice] = "#{@movie.title} was successfully created."
     redirect_to movies_path
   end
-  private
-  def movie_params
-      params.require(:movie).permit(:title, :rating, :description, :release_date)
-  end
+
   
   def show
     id = params[:id] # retrieve movie ID from URI route
@@ -24,11 +21,24 @@ class MoviesController < ApplicationController
     @movie = Movie.new
     # default: render 'new' template
   end
+  def edit
+    @movie = Movie.find params[:id]
+  end
   def update
     @movie = Movie.find params[:id]
     #@movie.update_attributes!(params[:movie])  # old way
     @movie.update_attributes!(movie_params)  # new way
     flash[:notice] = "#{@movie.title} was successfully updated."
     redirect_to movie_path(@movie)
+  end
+  def destroy
+    @movie = Movie.find(params[:id])
+    @movie.destroy
+    flash[:notice] = "Movie '#{@movie.title}' deleted."
+    redirect_to movies_path
+  end
+
+  def movie_params
+    params.require(:movie).permit(:title, :rating, :description, :release_date)
   end
 end
